@@ -114,7 +114,7 @@ if __name__ == '__main__':
 
 	banner(sys.argv, False, url, users)
 
-	with open(wordlist, 'r') as f:
+	with open(wordlist, 'r', errors='replace') as f:
 		passwds = f.read().splitlines()
 
 	entries = []
@@ -125,6 +125,7 @@ if __name__ == '__main__':
 				if "admin" in attack(entries):
 					find_one(entries)
 				entries = []
+				print("Going to sleep for a while...")
 				time.sleep(WAIT_TIME)
 			entries.append({"user": user, "passwd": passwds[num]})
 		if "admin" in attack(entries):
