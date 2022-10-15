@@ -16,8 +16,10 @@ import sys
 import ssl
 from array import *
 
+# Max # of requests is currently 1999:
+# https://github.com/aress31/xmlrpc-bruteforcer
 WAIT_TIME = 5
-PASSWD_PER_REQUEST = 1000
+PASSWD_PER_REQUEST = 1999
 
 class bcolors:
 	HEADER = '\033[95m'
