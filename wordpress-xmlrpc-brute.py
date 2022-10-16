@@ -63,8 +63,7 @@ def send_request(url, data):
 	ctx = ssl.create_default_context()
 	ctx.check_hostname = False
 	ctx.verify_mode = ssl.CERT_NONE
-	req = requests.post(url, data, headers={
-		"Content-Type": "application/xml"})
+	req = requests.post(url, data.encode("utf-8"), headers={"Content-Type": "application/xml"})
 	rsp = req.content.decode("utf-8")
 	return rsp
 
